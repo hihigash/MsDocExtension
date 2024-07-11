@@ -1,15 +1,12 @@
 const url = new URL(window.location.href);
 const actions = document.getElementById("article-header-page-actions");
 if (actions) {
-  const button = createButton();
-  if (actions.firstChild) {
-    actions.insertBefore(button, actions.firstChild);
-  } else {
-    actions.appendChild(button);
-  }
+  const githubButton = createGitHubButton();
+  const feedButton = createFeedButton();
+  actions.prepend(feedButton, githubButton);
 }
 
-function createButton(): HTMLButtonElement {
+function createGitHubButton(): HTMLButtonElement {
   const button = document.createElement("button");
   button.classList.add(
     "collection",
@@ -35,15 +32,50 @@ function createButton(): HTMLButtonElement {
   return button;
 }
 
+function createFeedButton(): HTMLButtonElement {
+  const button = document.createElement("button");
+  button.classList.add(
+    "collection",
+    "button",
+    "button-clear",
+    "button-sm",
+    "button-primary",
+    "display-none",
+    "display-inline-flex-tablet"
+  );
+  button.title = "Open the atom feed on GitHub";
+  button.addEventListener("click", () => {
+    openAtomFeedUrl(url.href).catch(console.error);
+  });
+  const span = document.createElement("span");
+  span.classList.add("icon", "margin-none");
+  button.appendChild(span);
+
+  const icon = document.createElement("span");
+  icon.classList.add("docon", "docon-feed");
+  span.appendChild(icon);
+
+  return button;
+}
+
+async function openAtomFeedUrl(url: string) {
+  const enUrl = convertToEnglishUrl(url);
+  const ghUrl = await fetchGithubUrl(enUrl);
+  if (ghUrl) {
+    const atomUrl = ghUrl.replace(/\/blob\//, "/commits/").concat(".atom");
+    open(atomUrl);
+  } 
+}
+
 async function openConvertedUrl(url: string) {
-  const enUrl = convertUrl(url);
+  const enUrl = convertToEnglishUrl(url);
   const ghUrl = await fetchGithubUrl(enUrl);
   if (ghUrl) {
     open(ghUrl);
   }
 }
 
-function convertUrl(url: string): string {
+function convertToEnglishUrl(url: string): string {
   return url.replace(
     /https:\/\/learn\.microsoft\.com\/[a-z]{2}-[a-z]{2}\//g,
     "https://learn.microsoft.com/en-us/"

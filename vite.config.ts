@@ -1,12 +1,13 @@
-import { defineConfig } from "vite";
 import { crx, defineManifest } from "@crxjs/vite-plugin";
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
 
 const manifest = defineManifest({
   manifest_version: 3,
-  name: "MSDOC2GHMD",
+  name: "Microsoft Document Extension",
   description:
-    "Open the markdown file on the Github repo from the current Microsoft document.",
-  version: "0.0.1",
+    "This is a Simple Browser extension for Microsoft document.",
+  version: "0.0.2",
   icons: {
     16: "icons/16.png",
     32: "icons/32.png",
@@ -21,16 +22,6 @@ const manifest = defineManifest({
   ],
 });
 
-const viteManifestHackIssue846: Plugin & { renderCrxManifest: (manifest: any, bundle: any) => void } = {
-  // Workaround from https://github.com/crxjs/chrome-extension-tools/issues/846#issuecomment-1861880919.
-  name: 'manifestHackIssue846',
-  renderCrxManifest(_manifest, bundle) {
-      bundle['manifest.json'] = bundle['.vite/manifest.json']
-      bundle['manifest.json'].fileName = 'manifest.json'
-      delete bundle['.vite/manifest.json']
-  },
-}
-
 export default defineConfig({
-  plugins: [viteManifestHackIssue846, crx({ manifest })],
+  plugins: [react(), crx({ manifest })],
 });
