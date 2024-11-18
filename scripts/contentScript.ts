@@ -63,21 +63,21 @@ async function openAtomFeedUrl(url: string) {
   const ghUrl = await fetchGithubUrl(enUrl);
   if (ghUrl) {
     const atomUrl = ghUrl.replace(/\/blob\//, "/commits/").concat(".atom");
-    open(atomUrl);
-  } 
+    window.open(atomUrl);
+  }
 }
 
 async function openConvertedUrl(url: string) {
   const enUrl = convertToEnglishUrl(url);
   const ghUrl = await fetchGithubUrl(enUrl);
   if (ghUrl) {
-    open(ghUrl);
+    window.open(ghUrl);
   }
 }
 
 function convertToEnglishUrl(url: string): string {
   return url.replace(
-    /https:\/\/learn\.microsoft\.com\/[a-z]{2}-[a-z]{2}\//g,
+    /https:\/\/learn\.microsoft\.com\/[a-z]{2}-[a-z]{2}\//,
     "https://learn.microsoft.com/en-us/"
   );
 }
@@ -89,6 +89,6 @@ async function fetchGithubUrl(url: string): Promise<string | null> {
   const parser = new DOMParser();
   const doc = parser.parseFromString(text || "", "text/html");
   const edit = doc.querySelector("a[aria-label='Edit']");
-  const hrefAttr = edit?.attributes.getNamedItem("href");
-  return hrefAttr ? hrefAttr.value : null;
+  const hrefAttr = edit?.getAttribute("href");
+  return hrefAttr ? hrefAttr : null;
 }

@@ -108,5 +108,6 @@
     "lib": [ "ESNext", "DOM" ],
     "moduleResolution": "Node",
   },
-  "include": ["scripts"]
+  "include": ["scripts/**/*.ts"],
+  "exclude": ["node_modules"]
 }
